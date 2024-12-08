@@ -81,8 +81,49 @@ def player_vs_computer(N):
             break
         print(board)
 
+# Computer vs Computer game loop
+def computer_vs_computer(N):
+    board = initialize_board(N)
+    player1 = 1
+    player2 = 2
+    while True:
+        # Player 1 move
+        start = time.perf_counter()
+        row, col = computer_move(board, player1)
+        end = time.perf_counter()
+        if row != -1:
+            board[row, col] = player1
+        print(f"Player 1 move: {row}, {col}, Time: {end - start:.10f} seconds")
+        if row == -1:
+            print("Draw!")
+            print(board)
+            break
+        if check_win(board, player1):
+            print("Player 1 wins!")
+            print(board)
+            break
+        print(board)
+
+        # Player 2 move
+        start = time.perf_counter()
+        row, col = computer_move(board, player2)
+        end = time.perf_counter()
+        if row != -1:
+            board[row, col] = player2
+        print(f"Player 2 move: {row}, {col}, Time: {end - start:.10f} seconds")
+        if row == -1:
+            print("Draw!")
+            print(board)
+            break
+        if check_win(board, player2):
+            print("Player 2 wins!")
+            print(board)
+            break
+        print(board)
+
 # Main execution
 if __name__ == "__main__":
     print(f"Program is using {config.NUMBA_NUM_THREADS} threads")
     N = 5
-    player_vs_computer(N)
+    # player_vs_computer(N)
+    computer_vs_computer(N)
