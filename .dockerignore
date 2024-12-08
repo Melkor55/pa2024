@@ -1,0 +1,109 @@
+# Ignore Python bytecode files
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Ignore installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Ignore unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Ignore translations
+*.mo
+*.pot
+
+# Ignore Django stuff
+*.log
+local_settings.py
+db.sqlite3
+
+# Ignore Flask stuff
+instance/
+.webassets-cache
+
+# Ignore Scrapy stuff
+.scrapy
+
+# Ignore Sphinx documentation
+docs/_build/
+
+# Ignore PyBuilder
+target/
+
+# Ignore Jupyter Notebook
+.ipynb_checkpoints
+
+# Ignore IPython
+profile_default/
+ipython_config.py
+
+# Ignore pyenv
+.python-version
+
+# Ignore celery beat schedule file
+celerybeat-schedule
+
+# Ignore dotenv
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Ignore Spyder project settings
+.spyderproject
+.spyproject
+
+# Ignore Rope project settings
+.ropeproject
+
+# Ignore mkdocs documentation
+/site
+
+# Ignore mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Ignore Pyre type checker
+.pyre/
+
+# Ignore VS Code
+.vscode/
