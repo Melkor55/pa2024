@@ -1,16 +1,9 @@
-from numba import njit, prange, config
+from numba import njit, prange
 import numpy as np
 import time
 
-# Initialize the game board
-def initialize_board(N):
-    return np.zeros((N, N), dtype=int)
-
-# Check if a move is valid
-def is_valid_move(board, row, col):
-    return board[row, col] == 0
-
 # Check for a win
+@njit
 def check_win(board, player):
     N = board.shape[0]
     # Check rows and columns
@@ -35,6 +28,14 @@ def computer_move(board, player):
                 board[i, j] = 0
     return -1, -1
 
+# Initialize the game board
+def initialize_board(N):
+    return np.zeros((N, N), dtype=int)
+
+# Check if a move is valid
+def is_valid_move(board, row, col):
+    return board[row, col] == 0
+
 # Player vs Computer game loop
 def player_vs_computer(N):
     board = initialize_board(N)
@@ -51,11 +52,12 @@ def player_vs_computer(N):
         # Computer move
         start = time.time()
         row, col = computer_move(board, computer)
+        if row != -1:
+            board[row, col] = computer
         print(f"Computer move: {row}, {col}, Time: {time.time() - start} seconds")
         if row == -1:
             print("Draw!")
             break
-        board[row, col] = computer
         if check_win(board, computer):
             print("Computer wins!")
             break
@@ -68,11 +70,12 @@ def computer_vs_computer(N, debug=False):
     while True:
         # Player 1 move
         row, col = computer_move(board, player1)
+        if row != -1:
+            board[row, col] = player1
         if row == -1:
             if debug:
                 print(board)
             break
-        board[row, col] = player1
         if check_win(board, player1):
             if debug:
                 print(board)
@@ -81,11 +84,12 @@ def computer_vs_computer(N, debug=False):
             print(board)
         # Player 2 move
         row, col = computer_move(board, player2)
+        if row != -1:
+            board[row, col] = player2
         if row == -1:
             if debug:
                 print(board)
             break
-        board[row, col] = player2
         if check_win(board, player2):
             if debug:
                 print(board)
