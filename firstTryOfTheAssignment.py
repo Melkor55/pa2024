@@ -8,7 +8,7 @@ def initialize_board(N):
 
 # Check if a move is valid
 def is_valid_move(board, row, col):
-    return board[row, col] == 0
+    return 0 <= row < board.shape[0] and 0 <= col < board.shape[1] and board[row, col] == 0
 
 # Check for a win
 @njit
@@ -46,15 +46,24 @@ def player_vs_computer(N):
     computer = 2
     while True:
         # Player move
-        row, col = map(int, input("Enter your move (row col): ").split())
+        try:
+            row, col = map(int, input("Enter your move (row col): ").split())
+            if not (0 <= row < N and 0 <= col < N):
+                raise ValueError
+        except ValueError:
+            print(f"Invalid input. Please enter two numbers between 0 and {N-1}.")
+            continue
+
         if is_valid_move(board, row, col):
             board[row, col] = player
             if check_win(board, player):
                 print("Player wins!")
+                print(board)
                 break
         else:
             print("Invalid move. Try again.")
             continue
+
         # Computer move
         start = time.time()
         row, col = computer_move(board, computer)
@@ -63,9 +72,11 @@ def player_vs_computer(N):
         print(f"Computer move: {row}, {col}, Time: {time.time() - start} seconds")
         if row == -1:
             print("Draw!")
+            print(board)
             break
         if check_win(board, computer):
             print("Computer wins!")
+            print(board)
             break
         print(board)
 
