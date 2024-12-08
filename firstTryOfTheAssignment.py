@@ -65,11 +65,12 @@ def player_vs_computer(N):
             continue
 
         # Computer move
-        start = time.time()
+        start = time.perf_counter()
         row, col = computer_move(board, computer)
+        end = time.perf_counter()
         if row != -1:
             board[row, col] = computer
-        print(f"Computer move: {row}, {col}, Time: {time.time() - start} seconds")
+        print(f"Computer move: {row}, {col}, Time: {end - start:.10f} seconds")
         if row == -1:
             print("Draw!")
             print(board)
@@ -83,5 +84,5 @@ def player_vs_computer(N):
 # Main execution
 if __name__ == "__main__":
     print(f"Program is using {config.NUMBA_NUM_THREADS} threads")
-    N =5  # Change this to test different board sizes
+    N = 5
     player_vs_computer(N)
