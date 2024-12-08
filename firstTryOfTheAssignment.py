@@ -18,7 +18,7 @@ def is_valid_move(board, row, col):
 def check_win(board, player):
     N = board.shape[0]
     # Check rows and columns
-    for i in prange(N):
+    for i in range(N):
         if np.all(board[i, :] == player) or np.all(board[:, i] == player):
             return True
     # Check diagonals
@@ -30,17 +30,25 @@ def check_win(board, player):
 @njit(parallel=True)
 def computer_move(board, player):
     N = board.shape[0]
-    best_move = (-1, -1)
+    best_move = np.array([-1, -1], dtype=np.int64)  # Use Numba-friendly array
+    found_win = False
     for i in prange(N):
         for j in prange(N):
-            if board[i, j] == 0:
+            if board[i, j] == 0 and not found_win:
+                # Print for debugging purposes (ensure it's cast properly)
+                print(f"({best_move[0]}, {best_move[1]})")
+                
                 board[i, j] = player
                 if check_win(board, player):
-                    return i, j
+                    best_move[0], best_move[1] = i, j
+                    found_win = True
                 board[i, j] = 0
-                if best_move == (-1, -1):
-                    best_move = (i, j)
+                
+                if best_move[0] == -1 and best_move[1] == -1:
+                    best_move[0], best_move[1] = i, j
+
     return best_move
+
 
 # Player vs Computer game loop
 def player_vs_computer(N):
