@@ -1,4 +1,4 @@
-from numba import njit
+from numba import njit, config
 import numpy as np
 import time
 
@@ -82,5 +82,6 @@ def player_vs_computer(N):
 
 # Main execution
 if __name__ == "__main__":
-    N = 3  # Change this to test different board sizes
+    print(f"Program is using {config.NUMBA_NUM_THREADS} threads")
+    N =5  # Change this to test different board sizes
     player_vs_computer(N)
