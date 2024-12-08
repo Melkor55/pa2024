@@ -1,9 +1,13 @@
-from numba import njit, prange, config
+from numba import njit, prange, config, threading_layer
 import numpy as np
 import time
 
 # Set the number of threads 
-config.NUMBA_NUM_THREADS = 12
+config.NUMBA_NUM_THREADS = 1
+# Set order of preference for threading layers
+config.THREADING_LAYER_PRIORITY = ["omp", "tbb", "workqueue"]
+# set the threading layer before any parallel target compilation
+config.THREADING_LAYER = 'threadsafe'
 
 # Initialize the game board
 def initialize_board(N):
@@ -147,3 +151,5 @@ if __name__ == "__main__":
     debug_mode = False
     computer_vs_computer(N, debug_mode)
     print(f"Program is using {config.NUMBA_NUM_THREADS} threads")
+    # demonstrate the threading layer chosen
+    print("Threading layer chosen: %s" % threading_layer())
