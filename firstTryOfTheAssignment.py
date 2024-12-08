@@ -2,6 +2,14 @@ from numba import njit, prange
 import numpy as np
 import time
 
+# Initialize the game board
+def initialize_board(N):
+    return np.zeros((N, N), dtype=int)
+
+# Check if a move is valid
+def is_valid_move(board, row, col):
+    return board[row, col] == 0
+
 # Check for a win
 @njit
 def check_win(board, player):
@@ -19,22 +27,30 @@ def check_win(board, player):
 @njit(parallel=True)
 def computer_move(board, player):
     N = board.shape[0]
+    best_move = (-1, -1)
     for i in prange(N):
-        for j in prange(N):
+        for j in range(N):
             if board[i, j] == 0:
                 board[i, j] = player
                 if check_win(board, player):
-                    return i, j
+                    best_move = (i, j)
                 board[i, j] = 0
-    return -1, -1
+    return best_move
 
-# Initialize the game board
-def initialize_board(N):
-    return np.zeros((N, N), dtype=int)
 
-# Check if a move is valid
-def is_valid_move(board, row, col):
-    return board[row, col] == 0
+# Player vs Computer game loop
+@njit(parallel=True)
+def computer_move(board, player):
+    N = board.shape[0]
+    best_move = (-1, -1)
+    for i in prange(N):
+        for j in range(N):
+            if board[i, j] == 0:
+                board[i, j] = player
+                if check_win(board, player):
+                    best_move = (i, j)
+                board[i, j] = 0
+    return best_move
 
 # Player vs Computer game loop
 def player_vs_computer(N):
@@ -49,6 +65,9 @@ def player_vs_computer(N):
             if check_win(board, player):
                 print("Player wins!")
                 break
+        else:
+            print("Invalid move. Try again.")
+            continue
         # Computer move
         start = time.time()
         row, col = computer_move(board, computer)
@@ -61,6 +80,9 @@ def player_vs_computer(N):
         if check_win(board, computer):
             print("Computer wins!")
             break
+        print(board)
+
+
 
 # Computer vs Computer game loop
 def computer_vs_computer(N, debug=False):
