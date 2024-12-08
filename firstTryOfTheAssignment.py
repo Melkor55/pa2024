@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 # Set the number of threads 
-config.NUMBA_NUM_THREADS = 2
+config.NUMBA_NUM_THREADS = 12
 
 # Initialize the game board
 def initialize_board(N):
@@ -35,9 +35,6 @@ def computer_move(board, player):
     for i in prange(N):
         for j in prange(N):
             if board[i, j] == 0 and not found_win:
-                # Print for debugging purposes (ensure it's cast properly)
-                print(f"({best_move[0]}, {best_move[1]})")
-                
                 board[i, j] = player
                 if check_win(board, player):
                     best_move[0], best_move[1] = i, j
@@ -78,7 +75,7 @@ def player_vs_computer(N):
         # Computer move
         start = time.perf_counter()
         row, col = computer_move(board, computer)
-        computer_move.parallel_diagnostics(level=4)
+        # computer_move.parallel_diagnostics(level=4)
         end = time.perf_counter()
         if row != -1:
             board[row, col] = computer
@@ -94,19 +91,22 @@ def player_vs_computer(N):
         print(board)
 
 # Computer vs Computer game loop
-def computer_vs_computer(N):
+def computer_vs_computer(N, debug_mode):
     board = initialize_board(N)
     player1 = 1
     player2 = 2
+    total_time = 0
     while True:
         # Player 1 move
         start = time.perf_counter()
         row, col = computer_move(board, player1)
-        computer_move.parallel_diagnostics(level=4)
+        # computer_move.parallel_diagnostics(level=4)
         end = time.perf_counter()
         if row != -1:
             board[row, col] = player1
-        print(f"Player 1 move: {row}, {col}, Time: {end - start:.10f} seconds")
+            _time = end - start
+            total_time += _time
+        print(f"Player 1 move: {row}, {col}, Time: {_time:.10f} seconds")
         if row == -1:
             print("Draw!")
             print(board)
@@ -115,16 +115,19 @@ def computer_vs_computer(N):
             print("Player 1 wins!")
             print(board)
             break
-        print(board)
+        if debug_mode:
+            print(board)
 
         # Player 2 move
         start = time.perf_counter()
         row, col = computer_move(board, player2)
-        computer_move.parallel_diagnostics(level=4)
+        # computer_move.parallel_diagnostics(level=4)
         end = time.perf_counter()
         if row != -1:
             board[row, col] = player2
-        print(f"Player 2 move: {row}, {col}, Time: {end - start:.10f} seconds")
+            _time = end - start
+            total_time += _time
+        print(f"Player 2 move: {row}, {col}, Time: {_time:.10f} seconds")
         if row == -1:
             print("Draw!")
             print(board)
@@ -133,11 +136,14 @@ def computer_vs_computer(N):
             print("Player 2 wins!")
             print(board)
             break
-        print(board)
+        if debug_mode:
+            print(board)
+    print(f"Total time: {total_time:.10f} seconds")
 
 # Main execution
 if __name__ == "__main__":
-    print(f"Program is using {config.NUMBA_NUM_THREADS} threads")
-    N = 5
+    N = 10
     # player_vs_computer(N)
-    computer_vs_computer(N)
+    debug_mode = False
+    computer_vs_computer(N, debug_mode)
+    print(f"Program is using {config.NUMBA_NUM_THREADS} threads")
