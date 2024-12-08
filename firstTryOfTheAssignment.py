@@ -1,6 +1,9 @@
-from numba import njit, config
+from numba import njit, prange, config
 import numpy as np
 import time
+
+# Set the number of threads 
+config.NUMBA_NUM_THREADS = 2
 
 # Initialize the game board
 def initialize_board(N):
@@ -15,7 +18,7 @@ def is_valid_move(board, row, col):
 def check_win(board, player):
     N = board.shape[0]
     # Check rows and columns
-    for i in range(N):
+    for i in prange(N):
         if np.all(board[i, :] == player) or np.all(board[:, i] == player):
             return True
     # Check diagonals
@@ -24,12 +27,12 @@ def check_win(board, player):
     return False
 
 # Function for computer move
-@njit
+@njit(parallel=True)
 def computer_move(board, player):
     N = board.shape[0]
     best_move = (-1, -1)
-    for i in range(N):
-        for j in range(N):
+    for i in prange(N):
+        for j in prange(N):
             if board[i, j] == 0:
                 board[i, j] = player
                 if check_win(board, player):
@@ -67,6 +70,7 @@ def player_vs_computer(N):
         # Computer move
         start = time.perf_counter()
         row, col = computer_move(board, computer)
+        computer_move.parallel_diagnostics(level=4)
         end = time.perf_counter()
         if row != -1:
             board[row, col] = computer
@@ -90,6 +94,7 @@ def computer_vs_computer(N):
         # Player 1 move
         start = time.perf_counter()
         row, col = computer_move(board, player1)
+        computer_move.parallel_diagnostics(level=4)
         end = time.perf_counter()
         if row != -1:
             board[row, col] = player1
@@ -107,6 +112,7 @@ def computer_vs_computer(N):
         # Player 2 move
         start = time.perf_counter()
         row, col = computer_move(board, player2)
+        computer_move.parallel_diagnostics(level=4)
         end = time.perf_counter()
         if row != -1:
             board[row, col] = player2
