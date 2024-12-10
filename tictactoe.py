@@ -159,7 +159,7 @@ def computer_vs_computer(N, debug_mode):
 if __name__ == "__main__":
     N = 3
     debug_mode = False
-    pvc_mode = True
+    pvc_mode = False
 
     if pvc_mode:
         player_vs_computer(N)
