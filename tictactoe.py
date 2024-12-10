@@ -85,7 +85,7 @@ def player_vs_computer(N):
             continue
 
         ##########################################################################################
-        
+
         # Computer move
         start = time.perf_counter()
         row, col = computer_move(board, computer)
@@ -157,10 +157,14 @@ def computer_vs_computer(N, debug_mode):
 
 # Main execution
 if __name__ == "__main__":
-    N = 10
-    # player_vs_computer(N)
+    N = 3
     debug_mode = False
-    computer_vs_computer(N, debug_mode)
+    pvc_mode = True
+
+    if pvc_mode:
+        player_vs_computer(N)
+    else:
+        computer_vs_computer(N, debug_mode)
 
     # show the number of threads set to be used
     print(f"Program is using {config.NUMBA_NUM_THREADS} threads")

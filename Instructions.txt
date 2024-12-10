@@ -1,0 +1,22 @@
+- Disclaimer I am using the latest version of pyhon to run this file
+
+
+- To run this file use:
+
+python tictactoe.py
+
+
+-------------------------------------------
+By default, the file in this state runs computer vs computer mode with debug_mode OFF
+
+- To change the number of threads the program can use, change 'config.NUMBA_NUM_THREADS = 4' with the according number [Line: 6]
+
+- To change the matrix size, change 'N = 10' with the according number [Line: 160]
+
+- To change the debug_mode in the case of computer_vs_computer mode, just set 'debug_mode = True' [Line: 161]
+
+- To change the play modes, from player_vs_computer('pvc_mode = True') to computer_vs_computer('pvc_mode = False') and vice-versa, set the value of the 'pvc_mode' accordingly [Line: 162] 
+
+-------------
+
+- For each computer movement, the time that takes for the function to complete it is calculated
