@@ -1,5 +1,8 @@
-- Disclaimer I am using the latest version of pyhon to run this file
+- Disclaimer I am using the 3.12.6 version of pyhon ('only versions >=3.9,<3.13 are supported')
 
+- Before running the file, the main dependencies have to be installed
+
+pip install numba numpy
 
 - To run this file use:
 
