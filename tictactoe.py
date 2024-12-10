@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 # Set the number of threads 
-config.NUMBA_NUM_THREADS = 1
+config.NUMBA_NUM_THREADS = 4
 # Set order of preference for threading layers
 config.THREADING_LAYER_PRIORITY = ["omp", "tbb", "workqueue"]
 # set the threading layer before any parallel target compilation
@@ -34,8 +34,10 @@ def check_win(board, player):
 @njit(parallel=True)
 def computer_move(board, player):
     N = board.shape[0]
-    best_move = np.array([-1, -1], dtype=np.int64)  # Use Numba-friendly array
+    best_move = np.array([-1, -1], dtype=np.int64)
     found_win = False
+    # Here it is checked, row by row if there is an empty space for the computer to play
+    #   if it is, then the computer considers that it's best move is that space
     for i in prange(N):
         for j in prange(N):
             if board[i, j] == 0 and not found_win:
@@ -58,6 +60,10 @@ def player_vs_computer(N):
     computer = 2
     while True:
         # Player move
+
+        # Here it is checked if the move intention given by the player is correct
+        #   and within the bounds of [0, N-1]
+        #   Example: N = 3, player cannot imput 3, 3 coordinates as this would be above boundaries
         try:
             row, col = map(int, input("Enter your move (row col): ").split())
             if not (0 <= row < N and 0 <= col < N):
@@ -65,7 +71,9 @@ def player_vs_computer(N):
         except ValueError:
             print(f"Invalid input. Please enter two numbers between 0 and {N-1}.")
             continue
-
+        # Here it is firstly checked if the move is valid
+        #   ( value is inside [0, N-1) for row and collumn, and the target location has value 0, meaning empty)
+        #   then it is checked if the game is won by the player
         if is_valid_move(board, row, col):
             board[row, col] = player
             if check_win(board, player):
@@ -76,6 +84,8 @@ def player_vs_computer(N):
             print("Invalid move. Try again.")
             continue
 
+        ##########################################################################################
+        
         # Computer move
         start = time.perf_counter()
         row, col = computer_move(board, computer)
@@ -83,7 +93,8 @@ def player_vs_computer(N):
         end = time.perf_counter()
         if row != -1:
             board[row, col] = computer
-        print(f"Computer move: {row}, {col}, Time: {end - start:.10f} seconds")
+            _time = end - start
+        print(f"Computer move: {row}, {col}, Time:  {_time:.10f} seconds")
         if row == -1:
             print("Draw!")
             print(board)
@@ -150,6 +161,9 @@ if __name__ == "__main__":
     # player_vs_computer(N)
     debug_mode = False
     computer_vs_computer(N, debug_mode)
+
+    # show the number of threads set to be used
     print(f"Program is using {config.NUMBA_NUM_THREADS} threads")
+
     # demonstrate the threading layer chosen
     print("Threading layer chosen: %s" % threading_layer())
