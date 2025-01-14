@@ -20,19 +20,20 @@ def My_MPI_Broadcast(buffer, root, comm):
 def My_MPI_Reduce(sendbuf, recvbuf, op, root, comm):
     rank = comm.Get_rank()  # Get the rank of the current process
     size = comm.Get_size()  # Get the total number of processes
-    mask = 1  # Initialize the mask to 1
+    recvbuf[:] = sendbuf[:]  # Initialize recvbuf with sendbuf
 
-    recvbuf[:] = sendbuf[:]  # Copy the send buffer to the receive buffer
-    while mask < size:  # Loop until the mask is less than the number of processes
-        if rank < mask:  # If the rank is less than the mask
-            if rank + mask < size:  # If the rank plus the mask is less than the number of processes
-                tempbuf = comm.recv(source=rank + mask)  # Receive the buffer from the process with rank + mask
-                for i in range(len(recvbuf)):  # Loop through the elements of the receive buffer
-                    recvbuf[i] += tempbuf[i]  # Add the elements of the temporary buffer to the receive buffer (assuming MPI_SUM operation)
-        elif rank < 2 * mask:  # If the rank is between mask and 2 * mask
-            comm.send(recvbuf, dest=rank - mask)  # Send the receive buffer to the process with rank - mask
-        mask <<= 1  # Left shift the mask by 1 (equivalent to multiplying by 2)
-    return recvbuf  # Return the receive buffer
+    mask = 1  # Start with mask = 1
+    while mask < size:
+        partner = rank ^ mask  # XOR to find the communication partner
+        if partner < size:  # Ensure partner is within valid range
+            if rank < partner:  # Receive from higher ranks
+                tempbuf = comm.recv(source=partner)
+                for i in range(len(recvbuf)):  # Apply operation (assumes MPI_SUM)
+                    recvbuf[i] += tempbuf[i]
+            else:  # Send to lower ranks
+                comm.send(recvbuf, dest=partner)
+        mask <<= 1  # Double the mask
+    return recvbuf if rank == root else None
 ##########################################################################################
 
 ##########################################################################################
