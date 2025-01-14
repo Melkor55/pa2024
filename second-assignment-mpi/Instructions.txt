@@ -1,0 +1,32 @@
+- Disclaimer: I am using the 3.12.8 version of python(from https://www.python.org/downloads/windows/)
+
+- Before running the file, the main dependencies have to be installed
+
+pip install mpi4py
+pip install Cython
+
+- Then, we need a working MPI implementation like MPICH or Open MPI(Only linux). For Windows there is MS-MPI(Microsoft MPI) that can be downloaded from https://www.microsoft.com/en-us/download/details.aspx?id=105289
+
+- Now everything should be setup and ready to run...
+
+- To run this file use:
+
+mpiexec -n $NUMBER_OF_PROCESSES python $PATH_TO_FILE
+
+Example: mpiexec -n 5 python second-assignment-mpi/my-mpi-python-functions.py
+
+
+-------------------------------------------
+By default, the file in this state runs computer vs computer mode with debug_mode OFF
+
+- To change the number of threads the program can use, change 'config.NUMBA_NUM_THREADS = 4' with the according number [Line: 6]
+
+- To change the matrix size, change 'N = 10' with the according number [Line: 160]
+
+- To change the debug_mode in the case of computer_vs_computer mode, just set 'debug_mode = True' [Line: 161]
+
+- To change the play modes, from player_vs_computer('pvc_mode = True') to computer_vs_computer('pvc_mode = False') and vice-versa, set the value of the 'pvc_mode' accordingly [Line: 162] 
+
+-------------
+
+- For each computer movement, the time that takes for the function to complete it is calculated
