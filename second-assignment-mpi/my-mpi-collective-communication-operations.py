@@ -3,38 +3,48 @@ from mpi4py import MPI
 def My_MPI_Broadcast(buffer, root, comm):
     rank = comm.Get_rank()
     size = comm.Get_size()
+    mask = 1
 
-    if rank == root:
-        for i in range(size):
-            if i != root:
-                comm.send(buffer, dest=i)
-    else:
-        buffer = comm.recv(source=root)
+    while mask < size:
+        if rank < mask:
+            if rank + mask < size:
+                comm.send(buffer, dest=rank + mask)
+        elif rank < 2 * mask:
+            buffer = comm.recv(source=rank - mask)
+        mask <<= 1
     return buffer
 
 def My_MPI_Reduce(sendbuf, recvbuf, op, root, comm):
     rank = comm.Get_rank()
     size = comm.Get_size()
+    mask = 1
 
-    if rank == root:
-        recvbuf[:] = sendbuf[:]
-        for i in range(size):
-            if i != root:
-                tempbuf = comm.recv(source=i)
-                for j in range(len(recvbuf)):
-                    recvbuf[j] += tempbuf[j]
-    else:
-        comm.send(sendbuf, dest=root)
+    recvbuf[:] = sendbuf[:]
+    while mask < size:
+        if rank < mask:
+            if rank + mask < size:
+                tempbuf = comm.recv(source=rank + mask)
+                for i in range(len(recvbuf)):
+                    recvbuf[i] += tempbuf[i]  # Assuming MPI_SUM operation
+        elif rank < 2 * mask:
+            comm.send(recvbuf, dest=rank - mask)
+        mask <<= 1
     return recvbuf
 
 def My_MPI_Barrier(comm):
     rank = comm.Get_rank()
     size = comm.Get_size()
+    mask = 1
 
-    for i in range(size):
-        if i != rank:
-            comm.send(None, dest=i)
-            comm.recv(source=i)
+    while mask < size:
+        if rank < mask:
+            if rank + mask < size:
+                comm.send(None, dest=rank + mask)
+                comm.recv(source=rank + mask)
+        elif rank < 2 * mask:
+            comm.recv(source=rank - mask)
+            comm.send(None, dest=rank - mask)
+        mask <<= 1
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
