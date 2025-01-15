@@ -6,27 +6,56 @@ pip install mpi4py
 pip install Cython
 
 - Then, we need a working MPI implementation like MPICH or Open MPI(Only linux). For Windows there is MS-MPI(Microsoft MPI) that can be downloaded from https://www.microsoft.com/en-us/download/details.aspx?id=105289
-
 - Now everything should be setup and ready to run...
 
 - To run this file use:
 
 mpiexec -n $NUMBER_OF_PROCESSES python $PATH_TO_FILE
 
-Example: mpiexec -n 5 python second-assignment-mpi/my-mpi-python-functions.py
-
+---
+Example:            mpiexec -n 5 python my-mpi-collective-communication-operations.py
+Expected output:
+    Process 2 received data 0
+    Process 2 reached the barrier
+    Process 1 received data 0
+    Process 1 reached the barrier
+    Process 7 received data 0
+    Process 7 reached the barrier
+    Process 0 received data 0
+    Reduced result: [45, 45, 45, 45, 45]
+    Process 0 reached the barrier
+    Process 3 received data 0
+    Process 3 reached the barrier
+    Process 8 received data 0
+    Process 8 reached the barrier
+    Process 4 received data 0
+    Process 4 reached the barrier
+    Process 5 received data 0
+    Process 5 reached the barrier
+    Process 6 received data 0
+    Process 6 reached the barrier
+    Process 9 received data 0
+    Process 9 reached the barrier
+Result interpretation:
+    - Each process received the data 0
+    - The reduced result is the sum of all the data sent by each process
+        - 0 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 = 45
+        - This value represents the sum of the ranks and is given to each element of the array, thus reduced result is [45, 45, 45, 45, 45]
+    - Each process reached the barrier
+---
 
 -------------------------------------------
-By default, the file in this state runs computer vs computer mode with debug_mode OFF
+The python file contains the 3 required functions followed by the test cases for each of them.
+- My_MPI_Broadcast
+Broadcasts a value from the root process to all other processes using a binary tree communication pattern. 
+Each process sends the data to its designated partner determined by a mask, ensuring efficient propagation.
 
-- To change the number of threads the program can use, change 'config.NUMBA_NUM_THREADS = 4' with the according number [Line: 6]
+- My_MPI_Reduce
+Performs a reduction operation (e.g., sum) across all processes, combining data element-wise from all ranks and storing the final result in the root process. 
+It uses a tree-based communication approach, where ranks exchange and merge data progressively.
 
-- To change the matrix size, change 'N = 10' with the according number [Line: 160]
+- My_MPI_Barrier
+Implements a synchronization point for all processes. 
+Each process communicates with its designated partner in a binary tree pattern, ensuring no process proceeds until all have reached the barrier.
+-------------------------------------------
 
-- To change the debug_mode in the case of computer_vs_computer mode, just set 'debug_mode = True' [Line: 161]
-
-- To change the play modes, from player_vs_computer('pvc_mode = True') to computer_vs_computer('pvc_mode = False') and vice-versa, set the value of the 'pvc_mode' accordingly [Line: 162] 
-
--------------
-
-- For each computer movement, the time that takes for the function to complete it is calculated
